@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SignBridge-Edge — жесты в текст</title>
+<style>
+  :root { --ink:#1d2433; --muted:#667085; --line:#e4e7ec; --accent:#7a5af8; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color:var(--ink); background:#f6f7f9; }
+  header { background:#fff; border-bottom:1px solid var(--line); padding:12px 16px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  h1 { font-size:19px; margin:0 8px 0 0; }
+  button, select { font:inherit; padding:8px 12px; border-radius:8px; border:1px solid var(--line); background:#fff; cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border:none; }
+  main { display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:16px; padding:16px; }
+  @media (max-width:900px) { main { grid-template-columns:1fr; } }
+  .stage { position:relative; background:#111; border-radius:12px; overflow:hidden; aspect-ratio:4/3; }
+  video, canvas { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transform:scaleX(-1); }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:14px; }
+  .big { font-size:30px; line-height:1.25; min-height:76px; font-weight:600; }
+  .gl { font-size:18px; color:var(--muted); min-height:28px; }
+  .pred { font-size:14px; color:var(--muted); }
+  .note { font-size:13px; color:var(--muted); }
+  .badge { display:inline-block; background:#ecfdf3; color:#067647; border-radius:6px; padding:2px 8px; font-size:13px; }
+  .warn { background:#fff4e5; border-left:4px solid #f79009; padding:8px 12px; border-radius:4px; font-size:13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🤟 SignBridge-Edge</h1>
+  <button class="primary" id="start">Включить камеру</button>
+  <button id="clear">Очистить</button>
+  <label>Язык <select id="lang"><option value="ru">Русский</option><option value="kk">Қазақша</option></select></label>
+  <label><input type="checkbox" id="speak"> Озвучивать</label>
+  <span class="badge">🔒 видео обрабатывается только на этом устройстве</span>
+</header>
+<main>
+  <section>
+    <div class="stage"><video id="video" playsinline muted></video><canvas id="overlay"></canvas></div>
+    <p class="note" id="status">Модели загружаются при первом запуске (≈ 15 МБ), затем работают офлайн из кэша браузера.</p>
+  </section>
+  <section>
+    <div class="card"><div class="note">Перевод</div><div class="big" id="text"></div></div>
+    <div class="card"><div class="note">Распознанные жесты</div><div class="gl" id="glosses"></div><div class="pred" id="pred"></div></div>
+    <div class="card warn" id="demo-warning" hidden>Загружена демонстрационная модель, обученная на синтетических данных: она показывает работу конвейера, но не распознаёт настоящие жесты КРЖЯ.</div>
+    <div class="card note">Проект не заменяет профессионального сурдопереводчика, особенно в медицинских и юридических ситуациях. Сервер только раздаёт статические файлы; кадры видео никуда не отправляются.</div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/ort.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

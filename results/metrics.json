@@ -1,0 +1,90 @@
+{
+  "trained_on": "синтетика (процедурные жесты, не КРЖЯ)",
+  "n_classes": 102,
+  "n_train": 7752,
+  "n_val": 1020,
+  "top1": 1.0,
+  "top5": 1.0,
+  "onnx_latency_ms_cpu": 1.3,
+  "model_size_kb": 1870.7,
+  "fairness": {
+    "skin_tone": {
+      "by_group": {
+        "I-II": {
+          "accuracy": 1.0,
+          "n": 408
+        },
+        "III-IV": {
+          "accuracy": 1.0,
+          "n": 408
+        },
+        "V-VI": {
+          "accuracy": 1.0,
+          "n": 204
+        }
+      },
+      "gap_pp": 0.0,
+      "within_target_5pp": true
+    },
+    "lighting": {
+      "by_group": {
+        "контровое": {
+          "accuracy": 1.0,
+          "n": 204
+        },
+        "тусклое": {
+          "accuracy": 1.0,
+          "n": 612
+        },
+        "хорошее": {
+          "accuracy": 1.0,
+          "n": 204
+        }
+      },
+      "gap_pp": 0.0,
+      "within_target_5pp": true
+    },
+    "device": {
+      "by_group": {
+        "планшет": {
+          "accuracy": 1.0,
+          "n": 612
+        },
+        "смартфон": {
+          "accuracy": 1.0,
+          "n": 408
+        }
+      },
+      "gap_pp": 0.0,
+      "within_target_5pp": true
+    },
+    "age": {
+      "by_group": {
+        "30–55": {
+          "accuracy": 1.0,
+          "n": 612
+        },
+        "55+": {
+          "accuracy": 1.0,
+          "n": 408
+        }
+      },
+      "gap_pp": 0.0,
+      "within_target_5pp": true
+    },
+    "hand": {
+      "by_group": {
+        "left": {
+          "accuracy": 1.0,
+          "n": 204
+        },
+        "right": {
+          "accuracy": 1.0,
+          "n": 816
+        }
+      },
+      "gap_pp": 0.0,
+      "within_target_5pp": true
+    }
+  }
+}

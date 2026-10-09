@@ -1,0 +1,342 @@
+{
+ "_comment": "Казахский дактиль: 42 знака кириллицы. Словарь хранится отдельно от модели: при переходе на латиницу меняется только поле latin / порядок вывода, без переобучения. Описания конфигураций кисти заполняются вместе с носителями КРЖЯ.",
+ "alphabet": "kk-Cyrl",
+ "letters": [
+  {
+   "id": "DACT_00",
+   "char": "А",
+   "latin": "A",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_01",
+   "char": "Ә",
+   "latin": "Ä",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_02",
+   "char": "Б",
+   "latin": "B",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_03",
+   "char": "В",
+   "latin": "V",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_04",
+   "char": "Г",
+   "latin": "G",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_05",
+   "char": "Ғ",
+   "latin": "Ğ",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_06",
+   "char": "Д",
+   "latin": "D",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_07",
+   "char": "Е",
+   "latin": "E",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_08",
+   "char": "Ё",
+   "latin": "Io",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_09",
+   "char": "Ж",
+   "latin": "J",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_10",
+   "char": "З",
+   "latin": "Z",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_11",
+   "char": "И",
+   "latin": "I",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_12",
+   "char": "Й",
+   "latin": "I",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_13",
+   "char": "К",
+   "latin": "K",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_14",
+   "char": "Қ",
+   "latin": "Q",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_15",
+   "char": "Л",
+   "latin": "L",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_16",
+   "char": "М",
+   "latin": "M",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_17",
+   "char": "Н",
+   "latin": "N",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_18",
+   "char": "Ң",
+   "latin": "Ñ",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_19",
+   "char": "О",
+   "latin": "O",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_20",
+   "char": "Ө",
+   "latin": "Ö",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_21",
+   "char": "П",
+   "latin": "P",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_22",
+   "char": "Р",
+   "latin": "R",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_23",
+   "char": "С",
+   "latin": "S",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_24",
+   "char": "Т",
+   "latin": "T",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_25",
+   "char": "У",
+   "latin": "U",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_26",
+   "char": "Ұ",
+   "latin": "Ū",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_27",
+   "char": "Ү",
+   "latin": "Ü",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_28",
+   "char": "Ф",
+   "latin": "F",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_29",
+   "char": "Х",
+   "latin": "H",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_30",
+   "char": "Һ",
+   "latin": "H",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_31",
+   "char": "Ц",
+   "latin": "S",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_32",
+   "char": "Ч",
+   "latin": "Ch",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_33",
+   "char": "Ш",
+   "latin": "Ş",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_34",
+   "char": "Щ",
+   "latin": "Ş",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_35",
+   "char": "Ъ",
+   "latin": "",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_36",
+   "char": "Ы",
+   "latin": "Y",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_37",
+   "char": "І",
+   "latin": "I",
+   "kazakh_specific": true,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_38",
+   "char": "Ь",
+   "latin": "",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_39",
+   "char": "Э",
+   "latin": "E",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_40",
+   "char": "Ю",
+   "latin": "Iu",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  },
+  {
+   "id": "DACT_41",
+   "char": "Я",
+   "latin": "Ia",
+   "kazakh_specific": false,
+   "handshape": "",
+   "movement": ""
+  }
+ ]
+}

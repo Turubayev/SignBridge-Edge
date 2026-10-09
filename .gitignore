@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.env
+# Записи людей не публикуются без отдельного согласия участников
+data/recordings/*/
+data/consent_registry.csv
+!data/consent_registry.template.csv
+models/holistic_landmarker.task
+*.tflite
