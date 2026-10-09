@@ -9,3 +9,5 @@ data/consent_registry.csv
 !data/consent_registry.template.csv
 models/holistic_landmarker.task
 *.tflite
+
+runs/

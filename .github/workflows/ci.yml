@@ -10,3 +10,8 @@ jobs:
           python-version: "3.11"
       - run: pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
       - run: pytest -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test tests/policy.test.mjs
+      - run: node --check web/app.js

@@ -29,6 +29,7 @@
 <header>
   <h1>🤟 SignBridge-Edge</h1>
   <button class="primary" id="start">Включить камеру</button>
+  <button id="stop" disabled>Выключить камеру</button>
   <button id="clear">Очистить</button>
   <label>Язык <select id="lang"><option value="ru">Русский</option><option value="kk">Қазақша</option></select></label>
   <label><input type="checkbox" id="speak"> Озвучивать</label>
@@ -37,12 +38,12 @@
 <main>
   <section>
     <div class="stage"><video id="video" playsinline muted></video><canvas id="overlay"></canvas></div>
-    <p class="note" id="status">Модели загружаются при первом запуске (≈ 15 МБ), затем работают офлайн из кэша браузера.</p>
+    <p class="note" id="status" role="status" aria-live="polite">Модели и библиотеки загружаются при первом запуске. Для загрузки нужен интернет.</p>
   </section>
   <section>
     <div class="card"><div class="note">Перевод</div><div class="big" id="text"></div></div>
     <div class="card"><div class="note">Распознанные жесты</div><div class="gl" id="glosses"></div><div class="pred" id="pred"></div></div>
-    <div class="card warn" id="demo-warning" hidden>Загружена демонстрационная модель, обученная на синтетических данных: она показывает работу конвейера, но не распознаёт настоящие жесты КРЖЯ.</div>
+    <div class="card warn" id="demo-warning">Перевод отключён до подключения модели с подтверждёнными реальными данными и оценкой на отдельных подписантах. Текущая модель обучена на синтетике; оценки классов показывают только работу конвейера.</div>
     <div class="card note">Проект не заменяет профессионального сурдопереводчика, особенно в медицинских и юридических ситуациях. Сервер только раздаёт статические файлы; кадры видео никуда не отправляются.</div>
   </section>
 </main>

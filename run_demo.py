@@ -91,12 +91,15 @@ def main():
     ap.add_argument("--holistic", default="models/holistic_landmarker.task")
     ap.add_argument("--camera", type=int, default=0)
     ap.add_argument("--tts", action="store_true")
-    ap.add_argument("--min-conf", type=float, default=0.35)
+    ap.add_argument("--min-conf", type=float, default=0.7)
     a = ap.parse_args()
+    if not .5 <= a.min_conf <= 1: ap.error('min-conf must be between .5 and 1')
 
     import cv2
 
     clf = OnnxClassifier(a.model)
+    if not clf.translation_allowed:
+        ap.error('This model is synthetic or lacks verified real-data/signer-disjoint evaluation. Translation disabled; inspect the browser pipeline demo instead.')
     info = {x["id"]: x for x in json.loads(Path(a.model).with_suffix(".labels.json").read_text(encoding="utf-8"))["info"]}
     ext = HolisticExtractor(a.holistic)
     seg = SignSegmenter()
@@ -118,7 +121,7 @@ def main():
             t1 = time.perf_counter()
             top = clf.top_k(normalize(ev["segment"]), 3)
             dt = (time.perf_counter() - t1) * 1000
-            if top[0][1] >= a.min_conf:
+            if top[0][1] >= a.min_conf and len(top) >= 2 and top[0][1] - top[1][1] >= .15:
                 glosses.append(top[0][0])
             last_pred = " | ".join(f"{info[g]['ru']} {p:.0%}" for g, p in top) + f"  ({dt:.0f} мс)"
         if ev and ev.get("end_of_sentence") and glosses:

@@ -1,6 +1,7 @@
 // SignBridge-Edge, браузерная версия: MediaPipe Tasks (Holistic) + ONNX Runtime Web.
 // Всё выполняется на устройстве; сервер только раздаёт статические файлы.
 import { FilesetResolver, HolisticLandmarker, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21/vision_bundle.mjs";
+import { translationAllowed, accepted } from './policy.mjs';
 
 // --- те же константы, что в signbridge/landmarks.py и features.py ---
 const POSE_IDX = [0, 11, 12, 13, 14, 15, 16, 23, 24];
@@ -11,13 +12,14 @@ const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/holistic_land
 
 const $ = id => document.getElementById(id);
 let landmarker, session, labels, info, running = false;
+let modelMeta={}, classifying=false, generation=0;
 let buf = [], idle = 0, sinceSign = 0, glosses = [], lastTs = -1;
 
 function frameToArray(r) {
   const out = new Float32Array(K * 3).fill(NaN);
   const put = (lms, idx, base) => {
     if (!lms || !lms.length) return;
-    const pts = lms[0] ?? lms;
+    const pts = Array.isArray(lms[0]) ? lms[0] : lms;
     (idx ?? pts.map((_, i) => i)).forEach((src, j) => {
       const p = pts[src]; if (!p) return;
       out.set([p.x, p.y, p.z], (base + j) * 3);
@@ -88,14 +90,22 @@ function active(f) {
 }
 
 async function classify(seg) {
+  if (classifying || !running) return;
+  classifying=true;
+  const current=generation;
+  try {
   const { data, dims } = normalize(seg);
   const t0 = performance.now();
   const res = await session.run({ features: new ort.Tensor("float32", data, dims) });
+  if (!running || current!==generation) return;
   const logits = res.logits.data, m = Math.max(...logits);
   const ex = Array.from(logits, v => Math.exp(v - m)), s = ex.reduce((a, b) => a + b, 0);
   const top = ex.map((v, i) => [i, v / s]).sort((a, b) => b[1] - a[1]).slice(0, 3);
   $("pred").textContent = top.map(([i, p]) => `${info[i].ru} ${(p * 100).toFixed(0)}%`).join(" · ") + ` (${(performance.now() - t0).toFixed(0)} мс)`;
-  if (top[0][1] > 0.35) { glosses.push(top[0][0]); renderGlosses(); }
+  if (accepted(top,modelMeta)) { glosses.push(top[0][0]); renderGlosses(); }
+  else $("pred").textContent += translationAllowed(modelMeta) ? ' · Не уверен, повторите жест' : ' · Только демонстрация; перевод отключён';
+  } catch(e) { $("status").textContent='Ошибка распознавания. Перезапустите камеру.'; stop(); }
+  finally { classifying=false; }
 }
 
 // Упрощённый порт правил gloss2text.RuleTranslator для браузера.
@@ -132,6 +142,7 @@ function endSentence() {
 async function loop() {
   if (!running) return;
   const v = $("video"), ts = performance.now();
+  try {
   if (v.readyState >= 2 && ts !== lastTs) {
     lastTs = ts;
     const r = landmarker.detectForVideo(v, ts);
@@ -144,6 +155,7 @@ async function loop() {
       else if (sinceSign === 50) endSentence();
     }
   }
+  } catch(e) { $("status").textContent='Не удалось обработать кадр. Перезапустите камеру.'; stop(); return; }
   requestAnimationFrame(loop);
 }
 function flush() { const seg = buf.slice(0, buf.length - idle); buf = []; idle = 0; if (seg.length >= 10) classify(seg); }
@@ -154,7 +166,7 @@ function draw(r) {
   c.width = $("video").videoWidth; c.height = $("video").videoHeight;
   ctx.clearRect(0, 0, c.width, c.height);
   drawer ??= new DrawingUtils(ctx);
-  [[r.leftHandLandmarks, "#12b76a"], [r.rightHandLandmarks, "#2e90fa"]].forEach(([h, col]) => (h || []).forEach(lm => {
+  [[r.leftHandLandmarks, "#12b76a"], [r.rightHandLandmarks, "#2e90fa"]].forEach(([h, col]) => (h?.length ? (Array.isArray(h[0]) ? h : [h]) : []).forEach(lm => {
     drawer.drawConnectors(lm, HolisticLandmarker.HAND_CONNECTIONS, { color: col, lineWidth: 3 });
     drawer.drawLandmarks(lm, { color: "#fff", radius: 2 });
   }));
@@ -166,25 +178,37 @@ async function init() {
   landmarker = await HolisticLandmarker.createFromOptions(vision, { baseOptions: { modelAssetPath: MODEL_URL, delegate: "GPU" }, runningMode: "VIDEO" });
   ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
   session = await ort.InferenceSession.create("models/krsl_isolated.onnx", { executionProviders: ["wasm"] });
-  const lj = await (await fetch("models/krsl_isolated.labels.json")).json();
+  const response = await fetch("models/krsl_isolated.labels.json");
+  if (!response.ok) throw Error('Не удалось загрузить описание модели');
+  const lj = await response.json(); modelMeta=lj;
   labels = lj.labels; info = lj.info;
   try { const g = await (await fetch("models/glosses.json")).json(); window.__topics = Object.fromEntries(g.glosses.map(x => [x.id, x.topic])); } catch (e) { /* необязательно */ }
-  $("demo-warning").hidden = !String(lj.trained_on || "").startsWith("синтетика");
+  $("demo-warning").hidden = translationAllowed(lj);
   $("status").textContent = `Готово: ${labels.length} классов. Покажите жест, затем опустите руки; пауза ~2 с завершает фразу.`;
 }
 
+function stop() {
+  running=false; generation++; buf=[]; idle=0; glosses=[]; renderGlosses();
+  $("video").srcObject?.getTracks().forEach(track=>track.stop());
+  $("video").srcObject=null; $("start").textContent='Включить камеру';
+  $("stop").disabled=true;
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+$("stop").onclick=()=>{stop();$("status").textContent='Камера выключена';};
+window.addEventListener('pagehide',stop);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
 $("start").onclick = async () => {
   if (running) return;
-  if (!landmarker) await init();
-  let stream;
+  $("start").disabled=true;
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+    if (!session) await init();
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+    $("video").srcObject = stream; await $("video").play();
+    running = true; lastTs=-1; sinceSign=0; $("start").textContent = "Камера включена"; $("stop").disabled=false; loop();
   } catch (e) {
-    $("status").textContent = "Нет доступа к камере: разрешите его в браузере (страница должна быть открыта по HTTPS или на localhost).";
-    return;
+    stop(); $("status").textContent = "Не удалось запустить камеру или модель. Проверьте доступ к камере, сеть и HTTPS/localhost.";
   }
-  $("video").srcObject = stream; await $("video").play();
-  running = true; $("start").textContent = "Камера включена"; loop();
+  finally { $("start").disabled=false; }
 };
 window.__signbridge = { normalize, translate };  // для тестов паритета с Python
-$("clear").onclick = () => { glosses = []; renderGlosses(); $("text").textContent = ""; $("pred").textContent = ""; };
+$("clear").onclick = () => { generation++; glosses = []; renderGlosses(); $("text").textContent = ""; $("pred").textContent = ""; };

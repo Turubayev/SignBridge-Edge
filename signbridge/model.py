@@ -45,11 +45,14 @@ class OnnxClassifier:
         self.sess = ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
         self.input = self.sess.get_inputs()[0].name
         lp = Path(labels_path) if labels_path else model_path.with_suffix(".labels.json")
-        self.labels = json.loads(lp.read_text(encoding="utf-8"))["labels"]
+        self.metadata = json.loads(lp.read_text(encoding="utf-8"))
+        self.labels = self.metadata["labels"]
 
     def predict_proba(self, feats: np.ndarray) -> np.ndarray:
         """feats: (T, F) или (B, T, F) → вероятности (B, C)."""
         x = feats[None] if feats.ndim == 2 else feats
+        if x.ndim != 3 or x.shape[1:] != (T_FIXED, FEAT_DIM) or not np.isfinite(x).all():
+            raise ValueError('Features must be finite (B, T_FIXED, FEAT_DIM)')
         logits = self.sess.run(None, {self.input: x.astype(np.float32)})[0]
         e = np.exp(logits - logits.max(axis=1, keepdims=True))
         return e / e.sum(axis=1, keepdims=True)
@@ -58,3 +61,9 @@ class OnnxClassifier:
         p = self.predict_proba(feats)[0]
         idx = np.argsort(-p)[:k]
         return [(self.labels[i], float(p[i])) for i in idx]
+
+    @property
+    def translation_allowed(self):
+        source = str(self.metadata.get('trained_on','')).lower()
+        return bool(source and not any(x in source for x in ('синтет','synthetic','demo')) and
+                    self.metadata.get('real_data_verified') is True and self.metadata.get('evaluation',{}).get('signer_disjoint') is True)
